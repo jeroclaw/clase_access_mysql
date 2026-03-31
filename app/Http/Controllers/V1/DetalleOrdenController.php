@@ -33,6 +33,9 @@ class DetalleOrdenController extends Controller
 
     public function store(Request $request)
     {
+        // NOTA: Con los nuevos cambios, los detalles de la orden se crean junto con la orden
+        // a través de `OrdenController@store`. Este método para crear un detalle de forma aislada
+        // podría ya no ser necesario o requerir una lógica diferente (ej. para añadir productos a una orden existente).
         $request->validate([
             'ordene_id' => 'required|exists:ordenes,id',
             'producto_id' => 'required|exists:productos,id',

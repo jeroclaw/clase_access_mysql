@@ -5,6 +5,8 @@ namespace App\Http\Controllers\v1;
 use App\Services\OrdenService;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
+use Exception;
+use Illuminate\Support\Facades\Log;
 
 class OrdenController extends Controller
 {
@@ -33,43 +35,49 @@ class OrdenController extends Controller
 
     public function store(Request $request)
     {
-        $request->validate([
-            'clientes_id' => 'required|exists:clientes,id',
-            'total' => 'required|numeric',
-            'estado' => 'required|string|max:20',
-        ]);
+        try {
+            $datosValidados = $request->validate([
+                'clientes_id' => 'required|exists:clientes,id',
+                'envio' => 'required|boolean',
+                'producto_id' => 'required|exists:productos,id',
+                'cantidad' => 'required|integer|min:1',
+            ]);
 
-        $orden = $this->service->create(
-            $request->only(['clientes_id', 'total', 'estado'])
-        );
+            $orden = $this->service->create($datosValidados);
 
-        return response()->json([
-            'message' => 'Orden creada correctamente',
-            'data' => $orden
-        ], 201);
+            // Cargar relaciones para la respuesta
+            $orden->load('detalles', 'envio');
+
+            return response()->json([
+                'message' => 'Orden creada correctamente',
+                'data' => $orden
+            ], 201);
+
+        } catch (Exception $e) {
+            Log::debug('entro');
+            Log::debug($e);
+            // Capturar cualquier excepción durante la transacción para dar una respuesta de error.
+            return response()->json(['message' => 'Error al crear la orden: ' . $e->getMessage()], 422);
+        }
     }
 
     public function update(Request $request, $id)
     {
-        $request->validate([
-            'clientes_id' => 'required|exists:clientes,id',
-            'total' => 'required|numeric',
-            'estado' => 'required|string|max:20',
-        ]);
+        try {
+            $datosValidados = $request->validate([
+                'clientes_id' => 'required|exists:clientes,id',
+                'envio' => 'required|boolean',
+                'producto_id' => 'required|exists:productos,id',
+                'cantidad' => 'required|integer|min:1',
+            ]);
 
-        $orden = $this->service->update(
-            $id,
-            $request->only(['clientes_id', 'total', 'estado'])
-        );
+            $orden = $this->service->update($id, $datosValidados);
 
-        if (!$orden) {
-            return response()->json(['message' => 'Orden no encontrada'], 404);
+            return response()->json(['message' => 'Orden actualizada correctamente', 'data' => $orden], 200);
+        } catch (Exception $e) {
+            Log::error('Error al actualizar la orden: ' . $e->getMessage());
+            return response()->json(['message' => 'Error al actualizar la orden: ' . $e->getMessage()], 422);
         }
-
-        return response()->json([
-            'message' => 'Orden actualizada correctamente',
-            'data' => $orden
-        ], 200);
     }
 
     public function destroy($id)

@@ -3,15 +3,21 @@
 namespace App\Services;
 
 use App\Handlers\CrudHandler;
+use App\Handlers\CrearOrdenHandler;
+use App\Handlers\ActualizarOrdenHandler;
 use App\Models\Ordene;
 
 class OrdenService
 {
     protected CrudHandler $handler;
+    protected CrearOrdenHandler $crearOrdenHandler;
+    protected ActualizarOrdenHandler $actualizarOrdenHandler;
 
-    public function __construct(CrudHandler $handler)
+    public function __construct(CrudHandler $handler, CrearOrdenHandler $crearOrdenHandler, ActualizarOrdenHandler $actualizarOrdenHandler)
     {
         $this->handler = $handler;
+        $this->crearOrdenHandler = $crearOrdenHandler;
+        $this->actualizarOrdenHandler = $actualizarOrdenHandler;
     }
 
     public function getAll()
@@ -24,20 +30,14 @@ class OrdenService
         return Ordene::with(['cliente', 'detalles'])->find($id);
     }
 
-    public function create(array $data): Ordene
+    public function create(array $datosValidados): Ordene
     {
-        return $this->handler->create(Ordene::class, $data);
+        return $this->crearOrdenHandler->handle($datosValidados);
     }
 
     public function update(int $id, array $data): ?Ordene
     {
-        $orden = Ordene::find($id);
-
-        if (!$orden) {
-            return null;
-        }
-
-        return $this->handler->update($orden, $data);
+        return $this->actualizarOrdenHandler->handle($id, $data);
     }
 
     public function delete(int $id): bool

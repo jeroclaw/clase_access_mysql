@@ -9,7 +9,11 @@ class Ordene extends Model
     protected $fillable = [
         'clientes_id',
         'total',
-        'estado',
+        'envio',
+    ];
+
+    protected $casts = [
+        'envio' => 'boolean',
     ];
 
     public function cliente()
@@ -22,6 +26,16 @@ class Ordene extends Model
         return $this->belongsToMany(Producto::class, 'detalle_ordenes')
             ->withPivot('cantidad', 'precio_unitario')
             ->withTimestamps();
+    }
+
+    public function detalles()
+    {
+        return $this->hasMany(DetalleOrden::class, 'ordene_id');
+    }
+
+    public function envio()
+    {
+        return $this->hasOne(Envio::class, 'ordene_id');
     }
 
 }

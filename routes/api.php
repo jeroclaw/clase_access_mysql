@@ -5,6 +5,7 @@ use App\Http\Controllers\V1\ClienteController;
 use App\Http\Controllers\V1\OrdenController;
 use App\Http\Controllers\V1\ProductoController;
 use App\Http\Controllers\V1\DetalleOrdenController;
+use App\Http\Controllers\V1\EnvioController;
 
 // CLIENTES
 Route::get('/clientes', [ClienteController::class, 'index']);
@@ -33,3 +34,7 @@ Route::post('/detalle-ordenes', [DetalleOrdenController::class, 'store']);
 Route::get('/detalle-ordenes/{id}', [DetalleOrdenController::class, 'show']);
 Route::put('/detalle-ordenes/{id}', [DetalleOrdenController::class, 'update']);
 Route::delete('/detalle-ordenes/{id}', [DetalleOrdenController::class, 'destroy']);
+
+// ENVIOS
+Route::get('/envios', [EnvioController::class, 'index']);
+Route::get('/envios/{id}', [EnvioController::class, 'show']);
