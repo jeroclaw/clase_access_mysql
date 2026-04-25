@@ -6,6 +6,7 @@ use App\Http\Controllers\V1\OrdenController;
 use App\Http\Controllers\V1\ProductoController;
 use App\Http\Controllers\V1\DetalleOrdenController;
 use App\Http\Controllers\V1\EnvioController;
+use App\Http\Controllers\ArticleController;
 
 // CLIENTES
 Route::get('/clientes', [ClienteController::class, 'index']);
@@ -38,3 +39,22 @@ Route::delete('/detalle-ordenes/{id}', [DetalleOrdenController::class, 'destroy'
 // ENVIOS
 Route::get('/envios', [EnvioController::class, 'index']);
 Route::get('/envios/{id}', [EnvioController::class, 'show']);
+
+
+Route::middleware('auth:sanctum')->group(function () {
+
+    // Todos los autenticados pueden ver la lista
+    Route::get('/articulos', [ArticleController::class, 'index']);
+
+    // Solo los que tienen permiso de crear
+    Route::post('/articulos', [ArticleController::class, 'store'])
+         ->middleware('permission:crear articulos');
+
+    // Solo los que tienen permiso de editar (Nota que aquí sí pasamos un {id})
+    Route::put('/articulos/{id}', [ArticleController::class, 'update'])
+         ->middleware('permission:editar articulos');
+
+    // Solo el Admin puede borrar (protección por ROL)
+    Route::delete('/articulos/{id}', [ArticleController::class, 'destroy'])
+         ->middleware('role:Admin');
+});
