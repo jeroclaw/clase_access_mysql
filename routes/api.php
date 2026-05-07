@@ -15,12 +15,7 @@ use App\Http\Controllers\V1\RolePermissionController;
 use App\Http\Controllers\V1\UserRoleController;
 use App\Http\Controllers\V1\UserPermissionController;
 
-// CLIENTES
-Route::get('/clientes', [ClienteController::class, 'index']);
-Route::post('/clientes', [ClienteController::class, 'store']);
-Route::get('/clientes/{id}', [ClienteController::class, 'show']);
-Route::put('/clientes/{id}', [ClienteController::class, 'update']);
-Route::delete('/clientes/{id}', [ClienteController::class, 'destroy']);
+
 
 // ORDENES
 Route::get('/ordenes', [OrdenController::class, 'index']);
@@ -51,6 +46,14 @@ Route::get('/envios/{id}', [EnvioController::class, 'show']);
 Route::post('/login', [AuthController::class, 'login']);
 
 Route::middleware('auth:sanctum')->group(function () {
+
+
+// CLIENTES
+    Route::get('/clientes', [ClienteController::class, 'index']);
+    Route::post('/clientes', [ClienteController::class, 'store']);
+    Route::get('/clientes/{id}', [ClienteController::class, 'show']);
+    Route::put('/clientes/{id}', [ClienteController::class, 'update']);
+    Route::delete('/clientes/{id}', [ClienteController::class, 'destroy']);
 
     // SEGURIDAD (Usuarios, Roles y Permisos)
     Route::apiResource('/users', UserController::class);
